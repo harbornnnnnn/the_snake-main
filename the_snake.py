@@ -1,6 +1,6 @@
 """Игра «Змейка» (Изгиб Питона) на pygame с ООП."""
 
-from random import choice, randint
+from random import randint
 
 import pygame
 
@@ -23,7 +23,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки (FPS):
-SPEED = 8  # Уменьшил скорость для более комфортной игры
+SPEED = 8
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -77,6 +77,7 @@ class Snake(GameObject):
     """Змейка: движение, рост, самоукус, сброс."""
 
     def __init__(self):
+        """Создаёт змейку длиной 1 в центре поля и задаёт движение вправо."""
         center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         super().__init__(position=center, body_color=SNAKE_COLOR)
 
@@ -97,6 +98,7 @@ class Snake(GameObject):
         return self.positions[0]
 
     def move(self):
+        """Перемещает змейку на одну клетку, с проходом сквозь границы."""
         head_x, head_y = self.get_head_position()
         dx, dy = self.direction
 
@@ -106,7 +108,7 @@ class Snake(GameObject):
         )
 
         # Проверка на столкновение с самой собой
-        if new_head in self.positions[1:]:  # Исключаем голову из проверки
+        if new_head in self.positions[1:]:
             self.reset()
             return
 
@@ -119,6 +121,7 @@ class Snake(GameObject):
             self.last = None
 
     def draw(self):
+        """Отрисовывает змейку и затирает последний удалённый сегмент."""
         # Отрисовка тела змейки (все сегменты кроме головы)
         for position in self.positions[1:]:
             rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
@@ -138,14 +141,13 @@ class Snake(GameObject):
     def grow(self):
         """Увеличивает длину змейки на 1."""
         self.length += 1
-        # Не удаляем хвост в следующем ходе
 
     def reset(self):
         """Сбрасывает змейку в начальное состояние после самоукуса."""
         self.length = 1
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.positions = [self.position]
-        self.direction = RIGHT  # Начинаем всегда с движения вправо
+        self.direction = RIGHT
         self.next_direction = None
         self.last = None
         print("Сброс! Начинаем заново.")
@@ -181,7 +183,7 @@ def main():
     print("Игра началась! Управление стрелками. Нажмите Esc для выхода.")
 
     while True:
-        clock.tick(SPEED)  # Управление скоростью игры
+        clock.tick(SPEED)
 
         # Обработка событий
         handle_keys(snake)
@@ -197,8 +199,8 @@ def main():
 
         # Проверка столкновения с яблоком
         if snake.get_head_position() == apple.position:
-            snake.grow()  # Увеличиваем длину змейки
-            apple.randomize_position(snake.positions)  # Новое яблоко
+            snake.grow()
+            apple.randomize_position(snake.positions)
             print(f"Съедено яблоко! Длина змейки: {snake.length}")
 
         # Проверка, не появилось ли яблоко на змейке
